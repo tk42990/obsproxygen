@@ -17,6 +17,7 @@
     <module>annotation</module>
     <module>observable</module>
     <module>test</module>
+	<module>parent</module>
   </modules>
 	
 

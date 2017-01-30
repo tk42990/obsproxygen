@@ -5,9 +5,14 @@
 	<artifactId>org.obsproxygen-test</artifactId>
     <version>0.0.1.0-SNAPSHOT</version>
     
+	<parent>
+        <groupId>org.obsproxygen</groupId>
+        <artifactId>org.obsproxygen-parent</artifactId>
+        <version>0.0.1.0-SNAPSHOT</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
+	
 	<properties>
-	   <org.freemarker.version>2.3.23</org.freemarker.version>
-	   <com.google.testing.compile.version>0.8</com.google.testing.compile.version>
 	   <compiler.source-target.version>1.8</compiler.source-target.version>
     </properties>
 	
@@ -16,15 +21,6 @@
             <groupId>org.obsproxygen</groupId>
             <artifactId>org.obsproxygen-annotations</artifactId>
             <version>${project.version}</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.obsproxygen</groupId>
-            <artifactId>org.obsproxygen-annotations</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-            <type>jar</type>
         </dependency>
 
         <dependency>

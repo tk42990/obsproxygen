@@ -53,7 +53,7 @@ public class SimpleUsage {
         assertThat(pcl.getEvents().size(), CoreMatchers.equalTo(2));
         assertThat(pcl.getEvents().get(0).getNewValue(), CoreMatchers.equalTo("Hello"));
         assertThat(pcl.getEvents().get(1).getNewValue(), CoreMatchers.equalTo("Hello1"));
-        assertThat(pcl.getEvents().get(1).getOldValue(), CoreMatchers.equalTo("Hello"));
+        assertThat(pcl.getEvents().get(1).getOldValue(), CoreMatchers.equalTo("Not Tracked"));
 
     }
 

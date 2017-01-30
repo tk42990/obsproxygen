@@ -56,8 +56,20 @@ public final class Observable${classname} <#if type_parameter?has_content><${typ
 </#list>
 
 
+    @Override
     public ${classname} getSource(){
         return source;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        return source.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return source.hashCode();
     }
 
 }
