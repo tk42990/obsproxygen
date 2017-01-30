@@ -1,22 +1,23 @@
 package org.obsproxygen.bean;
 
 
+import static org.junit.Assert.assertThat;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Function;
+
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.obsproxygen.observable.ObservableBean;
 import org.obsproxygen.observable.ObservableModel;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.*;
-import java.util.function.Function;
 
-import static org.junit.Assert.*;
-
-
-public class Usage {
+public class SimpleUsage {
 
     private RecordingPCL pcl;
 
