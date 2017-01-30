@@ -29,15 +29,12 @@ public final class Observable${classname} <#if type_parameter?has_content><${typ
     private String prefix = "";
     private ObservableModel<?> observableModel;
     private ${classname}<#if type_parameter?has_content><${type_parameter}></#if> source;
-    private Map<String,List<PropertyChangeListener>> listeners = new HashMap<>();
 
     public Observable${classname}(String prefix, ObservableModel<?> observableModel,  ${classname}<#if type_parameter?has_content><${type_parameter}></#if> source){
         this.source = source;
         this.prefix = prefix;
         this.observableModel = observableModel;
     }
-
-
 <#list properties as property>
 
     @Override
@@ -48,9 +45,7 @@ public final class Observable${classname} <#if type_parameter?has_content><${typ
 <#if property.is_property_setter>
         Object oldValue = <#if property.has_getter> ${property.getter_name}() <#else>null</#if>;
         ${property.parameter_call} = ObservableFactory.makeObservable(prefix+ "${property.property_name}", observableModel,${property.parameter_call});
-
 </#if>
-
         source.${property.method_name}(${property.parameter_call});
 <#if property.is_property_setter>
         observableModel.firePropertyChangeListener(prefix.isEmpty() ? "${property.property_name}" : prefix + "." + "${property.property_name}",  oldValue, ${property.parameter_call});

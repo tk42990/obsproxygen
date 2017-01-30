@@ -6,20 +6,26 @@ import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
  * Created by thku on 29.12.16.
  */
-public class ObservableCollection<E> implements Collection<E> {
+public class ObservableCollection<E> implements Collection<E>, ObservableBean<Collection<E>> {
 
+    private String prefix = "";
+    private ObservableModel<?> observableModel;
     private Collection<E> source;
+    private String COLLECTION_PREFIX = "[*]";
     // todo path to sub model bean
 
-    //TODO copy to other path !!!!!!!!!!!!!
+    //todo collection change listener
 
-    public ObservableCollection(Collection<E> source) {
+    public ObservableCollection(String prefix, ObservableModel<?> observableModel, Collection<E> source) {
         this.source = source;
+        this.prefix = prefix;
+        this.observableModel = observableModel;
     }
 
     @Override
@@ -34,7 +40,7 @@ public class ObservableCollection<E> implements Collection<E> {
 
     @Override
     public boolean contains(Object o) {
-        return source.contains(o); //TODO
+        return source.contains(o); //TODO check
     }
 
     @Override
@@ -54,32 +60,37 @@ public class ObservableCollection<E> implements Collection<E> {
 
     @Override
     public boolean add(E e) {
-        return source.add(e); //TODO
+        E proxy = ObservableFactory.makeObservable(prefix + COLLECTION_PREFIX, observableModel, e);
+        return source.add(proxy);
     }
 
     @Override
     public boolean remove(Object o) {
-        return source.remove(o); //TODO
+        return source.remove(o); //TODO check
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return source.containsAll(c); //TODO
+        return source.containsAll(c);
     }
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        return source.addAll(c); //TODO
+        List<E> newCollection = c
+                .stream()
+                .map(e -> ObservableFactory.makeObservable(prefix + COLLECTION_PREFIX, observableModel, e))
+                .collect(Collectors.toList());
+        return source.addAll(newCollection);
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        return source.removeAll(c); //TODO
+        return source.removeAll(c);
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        return source.retainAll(c); //TODO
+        return source.retainAll(c);
     }
 
     @Override
@@ -89,7 +100,7 @@ public class ObservableCollection<E> implements Collection<E> {
 
     @Override
     public boolean removeIf(Predicate<? super E> filter) {
-        return source.removeIf(filter); //TODO
+        return source.removeIf(filter);
     }
 
     @Override
@@ -99,16 +110,21 @@ public class ObservableCollection<E> implements Collection<E> {
 
     @Override
     public Stream<E> stream() {
-        return source.stream(); //TODO
+        return source.stream();
     }
 
     @Override
     public Stream<E> parallelStream() {
-        return source.parallelStream(); // todo
+        return source.parallelStream();
     }
 
     @Override
     public void forEach(Consumer<? super E> action) {
         source.forEach(action);
+    }
+
+    @Override
+    public Collection<E> getSource() {
+        return source;
     }
 }

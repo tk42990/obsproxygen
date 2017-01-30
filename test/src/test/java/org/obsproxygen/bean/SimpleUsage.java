@@ -3,9 +3,6 @@ package org.obsproxygen.bean;
 
 import static org.junit.Assert.assertThat;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -13,30 +10,20 @@ import java.util.function.Function;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.obsproxygen.bean.beans.OtherSimpleTestModelBean;
+import org.obsproxygen.bean.beans.SimpleTestModelBean;
 import org.obsproxygen.observable.ObservableBean;
 import org.obsproxygen.observable.ObservableModel;
 
 
 public class SimpleUsage {
 
-    private RecordingPCL pcl;
+    private RecordingPropertyChangeListener pcl;
 
-    private static class RecordingPCL implements PropertyChangeListener{
-        private List<PropertyChangeEvent> events = new ArrayList<>();
-
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-            events.add(evt);
-        }
-
-        public List<PropertyChangeEvent> getEvents() {
-            return events;
-        }
-    }
 
     @Before
     public void setUp(){
-        pcl = new RecordingPCL();
+        pcl = new RecordingPropertyChangeListener();
     }
 
     @Test
@@ -50,6 +37,23 @@ public class SimpleUsage {
         assertThat(pcl.getEvents().get(0).getNewValue(),CoreMatchers.equalTo("Hello"));
         assertThat(pcl.getEvents().get(1).getNewValue(),CoreMatchers.equalTo("Hello1"));
         assertThat(pcl.getEvents().get(1).getOldValue(),CoreMatchers.equalTo("Hello"));
+
+    }
+
+    @Test
+    public void simpleUsage_inactive() {
+        ObservableModel<SimpleTestModelBean> model = new ObservableModel<>(new SimpleTestModelBean());
+        model.addPropertyChangeListener("simpleProperty", pcl);
+        model.getProxy().setSimpleProperty("Hello");
+        model.activateListeners(false);
+        model.getProxy().setSimpleProperty("Not Tracked");
+        model.activateListeners(true);
+        model.getProxy().setSimpleProperty("Hello1");
+
+        assertThat(pcl.getEvents().size(), CoreMatchers.equalTo(2));
+        assertThat(pcl.getEvents().get(0).getNewValue(), CoreMatchers.equalTo("Hello"));
+        assertThat(pcl.getEvents().get(1).getNewValue(), CoreMatchers.equalTo("Hello1"));
+        assertThat(pcl.getEvents().get(1).getOldValue(), CoreMatchers.equalTo("Hello"));
 
     }
 

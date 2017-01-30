@@ -5,9 +5,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Thomas.Kummer on 30.01.2017.
- */
+
 class RecordingPropertyChangeListener implements PropertyChangeListener {
     private List<PropertyChangeEvent> events = new ArrayList<>();
 

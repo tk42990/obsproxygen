@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 	<groupId>org.obsproxygen</groupId>
 	<artifactId>org.obsproxygen-observable</artifactId>
-    <version>1.0.0.0-SNAPSHOT</version>
+    <version>0.0.1.0-SNAPSHOT</version>
     
 	<properties>
 	   <org.freemarker.version>2.3.23</org.freemarker.version>
@@ -12,30 +12,12 @@
     </properties>
 	
     <dependencies>
-        
-
-        <!-- Freemarker for source code generation -->
-        <dependency>
-            <groupId>org.freemarker</groupId>
-            <artifactId>freemarker</artifactId>
-			<version>${org.freemarker.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.obsproxygen</groupId>
             <artifactId>org.obsproxygen-annotations</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <!-- Google compiler testing to test generated sources-->
-		<dependency>
-            <groupId>com.google.testing.compile</groupId>
-            <artifactId>compile-testing</artifactId>
-			<version>${com.google.testing.compile.version}</version>
-            <scope>test</scope>
-        </dependency>
 	</dependencies>
-
 
     <build>
         <plugins>
@@ -49,60 +31,6 @@
                     <compilerArgument>-proc:none</compilerArgument>
                 </configuration>
                 <version>3.1</version>
-            </plugin>
-			<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-				<version>2.4.3</version>
-                <executions>
-                    <execution>
-                        <id>processor-deps-shading</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <minimizeJar>true</minimizeJar>
-                            <filters>
-                                <filter>
-                                    <artifact>org.freemarker:freemarker</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.*</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                            <relocations>
-                                <relocation>
-                                    <pattern>freemarker</pattern>
-                                    <shadedPattern>org.obsproxygen.shaded.freemarker</shadedPattern>
-                                </relocation>
-                            </relocations>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>unpack-freemarker-license</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.freemarker</groupId>
-                                    <artifactId>freemarker</artifactId>
-                                    <outputDirectory>${project.build.directory}/classes/META-INF/freemarker</outputDirectory>
-                                    <includes>META-INF/LICENSE.txt,META-INF/NOTICE.txt</includes>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
 			
         </plugins>

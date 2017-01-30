@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 	<groupId>org.obsproxygen</groupId>
 	<artifactId>org.obsproxygen-annotations</artifactId>
-    <version>1.0.0.0-SNAPSHOT</version>
+    <version>0.0.1.0-SNAPSHOT</version>
     
 	<properties>
 	   <org.freemarker.version>2.3.23</org.freemarker.version>

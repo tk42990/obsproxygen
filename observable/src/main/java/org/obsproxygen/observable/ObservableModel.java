@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.PreferenceChangeListener;
 
 /**
  * Created by thku on 09.01.17.
  */
+//TODO sub model
 public class ObservableModel<T> {
     private T source;
     private T proxy;
@@ -18,16 +18,27 @@ public class ObservableModel<T> {
 
     private Map<String, List<PropertyChangeListener>> listeners = new HashMap<>();
 
-
+    /**
+     * Constructor
+     * @param source the source object
+     */
     public ObservableModel(T source) {
         this.source = source;
-        this.proxy = ObservableFactory.makeObservable("",this,source);
+        this.proxy = ObservableFactory.makeObservable("", this, source);
     }
 
+    /**
+     * Return source with out proxy
+     * @return source
+     */
     public T getSource() {
         return source;
     }
 
+    /**
+     * Return proxy
+     * @return the proxy
+     */
     public T getProxy() {
         return proxy;
     }
@@ -47,7 +58,6 @@ public class ObservableModel<T> {
     public void activateListeners(boolean active) {
         this.active = active;
     }
-
 
     public void firePropertyChangeListener(String property, Object oldValue, Object newValue) {
         if (active) {
