@@ -1,4 +1,4 @@
-package org.obsproxygen.bean;
+package org.obsproxygen.bean.beans;
 
 import org.obsproxygen.GenerateObservable;
 
