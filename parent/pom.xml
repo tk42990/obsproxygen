@@ -11,19 +11,6 @@
 	   <com.google.testing.compile.version>0.8</com.google.testing.compile.version>
 	   <compiler.source-target.version>1.8</compiler.source-target.version>
     </properties>
-	
-    <dependencies>
-        
-
-        <!-- Freemarker for source code generation -->
-        <dependency>
-            <groupId>org.freemarker</groupId>
-            <artifactId>freemarker</artifactId>
-			<version>${org.freemarker.version}</version>
-        </dependency>
-
-	</dependencies>
-
 
     <build>
         <plugins>

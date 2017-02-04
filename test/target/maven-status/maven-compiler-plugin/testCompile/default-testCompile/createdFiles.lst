@@ -1,0 +1,6 @@
+org/obsproxygen/bean/beans/SimpleTestModelBean.class
+org/obsproxygen/bean/beans/OtherSimpleTestModelBean.class
+org/obsproxygen/bean/RecordingPropertyChangeListener.class
+org/obsproxygen/bean/beans/CollectionContainingModelBean.class
+org/obsproxygen/bean/CollectionUsage.class
+org/obsproxygen/bean/SimpleUsage.class

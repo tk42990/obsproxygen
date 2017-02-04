@@ -1,0 +1,15 @@
+org/obsproxygen/codegenerator/CodeGenerator.class
+org/obsproxygen/dataretriver/ClassAnalyserListener.class
+org/obsproxygen/TypeMapper.class
+org/obsproxygen/dataretriver/ClassDataHelper.class
+org/obsproxygen/GenerateObservable.class
+org/obsproxygen/TypeMapper$TypeMapping.class
+org/obsproxygen/dataretriver/impl/GenerateObservableAnnotationProcessor.class
+org/obsproxygen/dataretriver/impl/GenerateObservableAnnotationProcessor$TemplatePlaceholder.class
+org/obsproxygen/ModelBeanPropertyGenerator.class
+org/obsproxygen/ModelBeanPropertyGenerator$1.class
+org/obsproxygen/dataretriver/ClassDataHelper$1.class
+org/obsproxygen/dataretriver/ClassAnalyserFactory.class
+org/obsproxygen/codegenerator/TemplateFactory.class
+org/obsproxygen/GenerateProperties.class
+org/obsproxygen/dataretriver/impl/GenerateObservableAnnotationProcessor$GetterType.class

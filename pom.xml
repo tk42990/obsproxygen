@@ -19,7 +19,4 @@
     <module>test</module>
 	<module>parent</module>
   </modules>
-	
-
-
 </project>
