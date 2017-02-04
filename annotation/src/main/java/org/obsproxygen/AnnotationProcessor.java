@@ -24,9 +24,8 @@ import org.obsproxygen.dataretriver.ClassAnalyserListener;
 @SupportedAnnotationTypes({
         "org.obsproxygen.GenerateObservable"
 })
-public class ModelBeanPropertyGenerator extends AbstractProcessor {
+public class AnnotationProcessor extends AbstractProcessor {
 
-//TODO collection
 
     private Filer filer;
     private Messager messager;
@@ -79,8 +78,6 @@ public class ModelBeanPropertyGenerator extends AbstractProcessor {
             final List<? extends Element> enclosedElements = currentElement.getEnclosedElements();
             for (Element enclosedElement : enclosedElements) {
                 final ElementKind kind = enclosedElement.getKind();
-
-
                 if (!handledProperties.contains(enclosedElement.getSimpleName().toString())) {
                     if (isValidMethod(enclosedElement, kind)) {
                         handledProperties.add(enclosedElement.getSimpleName().toString());
@@ -135,12 +132,6 @@ public class ModelBeanPropertyGenerator extends AbstractProcessor {
                 }, null
         );
     }
-
-
-
-
-
-
 
 
     /**

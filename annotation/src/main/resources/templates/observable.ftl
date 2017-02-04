@@ -39,6 +39,7 @@ public final class Observable${classname} <#if type_parameter?has_content><${typ
 
     @Override
     ${property.method_signature}{
+    // ${property.getter_name}
 <#if property.return_value>
         return source.${property.method_name}(${property.parameter_call});
 <#else>
