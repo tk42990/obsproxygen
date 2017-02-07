@@ -1,14 +1,27 @@
 package org.obsproxygen.dataretriver;
 
-import org.obsproxygen.TypeMapper;
-
-import javax.lang.model.element.*;
-import javax.lang.model.type.*;
-import javax.lang.model.util.ElementKindVisitor6;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
+
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.IntersectionType;
+import javax.lang.model.type.PrimitiveType;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.TypeVariable;
+import javax.lang.model.util.ElementKindVisitor6;
+
+import org.obsproxygen.TypeMapper;
 
 /**
  * Created by thku on 28.12.16.
@@ -212,6 +225,8 @@ public class ClassDataHelper {
                 && ((ExecutableElement) method).getParameters().size() == 1
                 && (method.getReturnType().getKind() == TypeKind.VOID);
     }
+
+
 
     public static String getPropertyName(ExecutableElement enclosedElement) {
         final String string = enclosedElement.getSimpleName().toString();

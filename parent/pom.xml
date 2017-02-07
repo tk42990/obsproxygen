@@ -21,7 +21,7 @@
                     <source>${compiler.source-target.version}</source>
                     <target>${compiler.source-target.version}</target>
                     <!-- This argument is required to compile the Annotation Processor (without having a compiled Annotation Processor) -->
-                    <compilerArgument>-proc:none</compilerArgument>
+
                 </configuration>
                 <version>3.1</version>
             </plugin>
