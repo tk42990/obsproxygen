@@ -1,5 +1,6 @@
 package org.obsproxygen.dataretriver.impl;
 
+import static java.util.Arrays.asList;
 import static org.obsproxygen.dataretriver.ClassDataHelper.getGetterName;
 import static org.obsproxygen.dataretriver.ClassDataHelper.getMethodName;
 import static org.obsproxygen.dataretriver.ClassDataHelper.getMethodSignature;
@@ -11,12 +12,10 @@ import static org.obsproxygen.dataretriver.ClassDataHelper.isPropertyGetter;
 import static org.obsproxygen.dataretriver.ClassDataHelper.isPropertySetter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.annotation.processing.Filer;
@@ -35,27 +34,70 @@ import org.obsproxygen.dataretriver.ClassDataHelper;
  */
 public class GenerateObservableAnnotationProcessor implements ClassAnalyserListener {
 
-    private Element rootElement;
 
-    private enum GetterType{is,get}
-    private final Map<String, Object> templateData = new HashMap<>();
     private Filer filer;
     private Messager messager;
-    private List<Map<String, Object>> properties;
-    private final Map<String,GetterType> hasGetter = new HashMap<>();
+    private GlobalContext globalContext;
+    private ClassContext classContext;
 
-    private enum TemplatePlaceholder {
-        property_generator, // FQN of property generator
-        date, // current date
-        getter_name,
-        has_getter,
-        has_is_getter,
-        property_name
+    @SuppressWarnings("unused")
+    private enum TemplatePlaceholderInit implements Consumer<GlobalContext>{
+        property_generator(globalContext1 -> GenerateObservableAnnotationProcessor.class.toString()), // FQN of property generator
+        date(globalContext1 -> new Date().toString()); // current date
+
+        private final Function<GlobalContext, Object> function;
+
+        TemplatePlaceholderInit(Function<GlobalContext,Object> function) {
+            this.function = function;
+        }
+
+        @Override
+        public void accept(GlobalContext globalContext) {
+            globalContext.getTemplateData().put(name(),function.apply(globalContext));
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private enum TemplatePlaceholderFinish implements Consumer<GlobalContext> {
+        getter_name((property, gc) -> {
+            String propertyName = (String) property.get(TemplatePlaceholderMethod.property_name.name());
+            boolean hasGetter = gc.getHasGetter().containsKey(propertyName);
+            if (hasGetter) {
+                boolean booleanGetter = gc.getHasGetter().get(propertyName) == GetterType.is;
+                return getGetterName((String) property.get(TemplatePlaceholderMethod.property_name.name()),
+                        booleanGetter);
+            }
+            return "";
+        }),
+
+        has_getter((property, gc) -> {
+            String propertyName = (String) property.get(TemplatePlaceholderMethod.property_name.name());
+            return gc.getHasGetter().containsKey(propertyName);
+        }),
+
+        has_is_getter((property, gc) -> {
+            String propertyName = (String) property.get(TemplatePlaceholderMethod.property_name.name());
+            boolean hasGetter = gc.getHasGetter().containsKey(propertyName);
+            return hasGetter && gc.getHasGetter().get(propertyName) == GetterType.is;
+        });
+
+        private BiFunction<Map<String, Object>, GlobalContext, Object> function;
+
+        TemplatePlaceholderFinish(BiFunction<Map<String, Object>, GlobalContext, Object> function) {
+            this.function = function;
+        }
+
+        @Override
+        public void accept(GlobalContext globalContext) {
+            globalContext.getProperties()
+                    .forEach(property -> property.put(name(), function.apply(property, globalContext)));
+        }
+
     }
 
 
     @SuppressWarnings("unused")
-    private enum TemplatePlaceholderMethod implements BiConsumer<Map<String, Object>, MethodContext> {
+    enum TemplatePlaceholderMethod implements Consumer<MethodContext> {
         method_signature (m -> getMethodSignature(m.getMethod(), m.getEnclosingClass(),m.getRootElement(), m.getTypeMapper())),
         parameter_call(methodContext -> getParameterCall(methodContext.getMethod())),
         method_name(methodContext -> getMethodName(methodContext.getMethod())),
@@ -70,19 +112,19 @@ public class GenerateObservableAnnotationProcessor implements ClassAnalyserListe
         }
 
         @Override
-        public void accept(Map<String, Object> stringObjectMap, MethodContext methodContext) {
-            stringObjectMap.put(name(), function.apply(methodContext));
+        public void accept(MethodContext methodContext) {
+            methodContext.getMethodData().put(name(), function.apply(methodContext));
         }
     }
 
     @SuppressWarnings("unused")
-    private enum TemplatePlaceholderClass implements BiConsumer<Map<String, Object>,Element> {
+    enum TemplatePlaceholderClass implements Consumer<ClassContext> {
         packagename(ClassDataHelper::getPackageName), // package name of target class
         classname(ClassDataHelper::getSimpleClassName),  // class name of source class simple name
         classname_full(ClassDataHelper::getFullQualifiedeClassName), // full name of source class (FQN)
         has_type_parameter(ClassDataHelper::hasTypeParameters),
         type_parameter(ClassDataHelper::getTypeParameters),
-        properties(element -> new ArrayList<>());
+        properties(element -> new ArrayList<>()); //TODO useless
 
         private final Function<Element, Object> function;
 
@@ -91,71 +133,60 @@ public class GenerateObservableAnnotationProcessor implements ClassAnalyserListe
         }
 
         @Override
-        public void accept(Map<String, Object> stringObjectMap, Element element) {
-            stringObjectMap.put(name(), function.apply(element));
+        public void accept(ClassContext classContext) {
+            classContext.getGlobalContext()
+                    .getTemplateData().put(name(), function.apply(classContext.getElement()));
         }
-    }
-
-    public GenerateObservableAnnotationProcessor() {
-        properties = new ArrayList<>();
     }
 
     @Override
     public void init(Filer filer, Messager messager) {
         this.filer = filer;
         this.messager = messager;
-        templateData.put(TemplatePlaceholder.property_generator.name(), getClass().toString());
-        templateData.put(TemplatePlaceholder.date.name(), new Date().toString());
+        this.globalContext = new GlobalContext();
+        asList(TemplatePlaceholderInit.values())
+                .forEach(templatePlaceholderInit -> templatePlaceholderInit.accept(globalContext));
     }
 
     @Override
     public void onClass(Element rootElement) {
-        this.rootElement = rootElement;
-        Arrays.asList(TemplatePlaceholderClass.values())
-                .forEach(templatePlaceholder -> templatePlaceholder.accept(templateData, rootElement));
-        properties = (List<Map<String, Object>>) templateData.get(TemplatePlaceholderClass.properties.name());
+        classContext = new ClassContext(rootElement,globalContext);
+        asList(TemplatePlaceholderClass.values())
+                .forEach(templatePlaceholder -> templatePlaceholder.accept(classContext));
+
     }
 
     @Override
     public void onMethod(Element enclosingClass, ExecutableElement method, TypeMapper typeMapper) {
-        MethodContext methodContext = new MethodContext(enclosingClass, rootElement, method, typeMapper);
+        MethodContext methodContext = new MethodContext(
+                enclosingClass,
+                classContext.getElement(),
+                method,
+                typeMapper,
+                globalContext);
 
-        final Map<String, Object> methodData = new HashMap<>();
-        Arrays.asList(TemplatePlaceholderMethod.values())
-                .forEach(templatePlaceholder -> templatePlaceholder.accept(methodData, methodContext));
-        properties.add(methodData);
+        asList(TemplatePlaceholderMethod.values())
+                .forEach(templatePlaceholder -> templatePlaceholder.accept(methodContext));
         String propertyName = getPropertyName(method);
         if (!propertyName.isEmpty()&& isPropertyGetter(method)) {
-            hasGetter.put(propertyName, isIsPropertyGetter(method) ? GetterType.is :GetterType.get);
+            globalContext.getHasGetter().put(propertyName, isIsPropertyGetter(method) ? GetterType.is : GetterType.get);
         }
     }
 
     @Override
     public void finished() throws Exception {
-
-        for (Map<String, Object> property : properties) {
-            String propertyName = (String) property.get(TemplatePlaceholder.property_name.name());
-            boolean hasGetter = this.hasGetter.containsKey(propertyName);
-            property.put(TemplatePlaceholder.has_getter.name(), hasGetter);
-            if(hasGetter){
-                property.get(TemplatePlaceholder.property_name.name());
-                boolean booleanGetter = this.hasGetter.get(propertyName) == GetterType.is;
-                property.put(TemplatePlaceholder.has_is_getter.name(), booleanGetter);
-                property.put(TemplatePlaceholder.getter_name.name(),
-                        getGetterName(
-                                (String) property.get(TemplatePlaceholder.property_name.name()),
-                                booleanGetter));
-            }
-        }
+        asList(TemplatePlaceholderFinish.values())
+                .forEach(templatePlaceholder -> templatePlaceholder.accept(globalContext));
         new CodeGenerator(filer, messager)
                 .generateCode(
                         TemplateFactory.getTemplate(),
                         getNameForObservableClass(),
-                        templateData);
+                        globalContext.getTemplateData());
     }
 
 
     private String getNameForObservableClass() {
-        return templateData.get(TemplatePlaceholderClass.packagename.name()) + ".Observable" + templateData.get(TemplatePlaceholderClass.classname.name());
+        return globalContext.getTemplateData().get(TemplatePlaceholderClass.packagename.name())
+                + ".Observable" + globalContext.getTemplateData().get(TemplatePlaceholderClass.classname.name());
     }
 }
