@@ -18,7 +18,7 @@ public class GlobalContext {
 
     public GlobalContext() {
         this.properties = new ArrayList<>();
-        templateData.put(TemplatePlaceholderClass.properties.name(),properties);
+        templateData.put("properties",properties);
     }
 
     public Map<String, Object> getTemplateData() {

@@ -123,8 +123,8 @@ public class GenerateObservableAnnotationProcessor implements ClassAnalyserListe
         classname(ClassDataHelper::getSimpleClassName),  // class name of source class simple name
         classname_full(ClassDataHelper::getFullQualifiedeClassName), // full name of source class (FQN)
         has_type_parameter(ClassDataHelper::hasTypeParameters),
-        type_parameter(ClassDataHelper::getTypeParameters),
-        properties(element -> new ArrayList<>()); //TODO useless
+        type_parameter(ClassDataHelper::getTypeParameters);
+       // properties(element -> new ArrayList<>()); //TODO useless
 
         private final Function<Element, Object> function;
 

@@ -30,6 +30,9 @@ public final class Observable${classname} <#if type_parameter?has_content><${typ
     private ObservableModel<?> observableModel;
     private ${classname}<#if type_parameter?has_content><${type_parameter}></#if> source;
 
+<#list properties as property>
+        // private return_type property_name;
+</#list>
     public Observable${classname}(String prefix, ObservableModel<?> observableModel,  ${classname}<#if type_parameter?has_content><${type_parameter}></#if> source){
         this.source = source;
         this.prefix = prefix;
@@ -40,12 +43,23 @@ public final class Observable${classname} <#if type_parameter?has_content><${typ
     @Override
     ${property.method_signature}{
     // ${property.getter_name}
+//<if property.is_property_getter>
+        // check if saved value is null
+        //if (yes)
+            //get value from source
+             // create proxy
+             //save proxy value
+        // return proxy value
+
+//</if>
+
 <#if property.return_value>
         return source.${property.method_name}(${property.parameter_call});
 <#else>
 <#if property.is_property_setter>
         Object oldValue = <#if property.has_getter> ${property.getter_name}() <#else>null</#if>;
         ${property.parameter_call} = ObservableFactory.makeObservable(prefix+ "${property.property_name}", observableModel,${property.parameter_call});
+        // set proxy value
 </#if>
         source.${property.method_name}(${property.parameter_call});
 <#if property.is_property_setter>

@@ -21,7 +21,14 @@
     </properties>
 	
     <dependencies>
-        
+
+        <dependency>
+            <groupId>com.google.testing.compile</groupId>
+            <artifactId>compile-testing</artifactId>
+            <version>0.8</version>
+            <scope>test</scope>
+        </dependency>
+
 
         <!-- Freemarker for source code generation -->
         <dependency>
