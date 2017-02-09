@@ -22,6 +22,7 @@ import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.ElementKindVisitor6;
 
 import org.obsproxygen.TypeMapper;
+import org.obsproxygen.dataretriver.impl.MethodContext;
 
 /**
  * Created by thku on 28.12.16.
@@ -125,6 +126,11 @@ public class ClassDataHelper {
         return method.getSimpleName().toString();
     }
 
+
+    public static String getType(MethodContext context) {
+        return getType(context.getEnclosingClass(), context.getRootElement(), context.getTypeMapper(), context.getMethod().asType());
+    }
+
     private static String getType(Element currentElement, Element rootElement, TypeMapper typeMapper, TypeMirror returnTypeOfMethod) {
         String propertyType;
         if (returnTypeOfMethod instanceof DeclaredType) {
@@ -225,7 +231,6 @@ public class ClassDataHelper {
                 && ((ExecutableElement) method).getParameters().size() == 1
                 && (method.getReturnType().getKind() == TypeKind.VOID);
     }
-
 
 
     public static String getPropertyName(ExecutableElement enclosedElement) {

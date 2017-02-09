@@ -1,15 +1,7 @@
 package org.obsproxygen.dataretriver.impl;
 
 import static java.util.Arrays.asList;
-import static org.obsproxygen.dataretriver.ClassDataHelper.getGetterName;
-import static org.obsproxygen.dataretriver.ClassDataHelper.getMethodName;
-import static org.obsproxygen.dataretriver.ClassDataHelper.getMethodSignature;
-import static org.obsproxygen.dataretriver.ClassDataHelper.getParameterCall;
-import static org.obsproxygen.dataretriver.ClassDataHelper.getPropertyName;
-import static org.obsproxygen.dataretriver.ClassDataHelper.hasReturnValue;
-import static org.obsproxygen.dataretriver.ClassDataHelper.isIsPropertyGetter;
-import static org.obsproxygen.dataretriver.ClassDataHelper.isPropertyGetter;
-import static org.obsproxygen.dataretriver.ClassDataHelper.isPropertySetter;
+import static org.obsproxygen.dataretriver.ClassDataHelper.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -102,7 +94,9 @@ public class GenerateObservableAnnotationProcessor implements ClassAnalyserListe
         parameter_call(methodContext -> getParameterCall(methodContext.getMethod())),
         method_name(methodContext -> getMethodName(methodContext.getMethod())),
         return_value(methodContext -> hasReturnValue(methodContext.getMethod())),
+        return_type(ClassDataHelper::getType),
         is_property_setter(methodContext -> isPropertySetter(methodContext.getMethod())),
+        is_property_getter(methodContext -> isPropertyGetter(methodContext.getMethod())),
         property_name(methodContext -> getPropertyName(methodContext.getMethod()));
 
         private final Function<MethodContext, Object> function;
