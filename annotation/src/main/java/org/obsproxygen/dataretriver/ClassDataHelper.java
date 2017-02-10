@@ -128,7 +128,11 @@ public class ClassDataHelper {
 
 
     public static String getType(MethodContext context) {
-        return getType(context.getEnclosingClass(), context.getRootElement(), context.getTypeMapper(), context.getMethod().asType());
+        return getType(
+                context.getEnclosingClass(),
+                context.getRootElement(),
+                context.getTypeMapper(),
+                context.getMethod().getReturnType());
     }
 
     private static String getType(Element currentElement, Element rootElement, TypeMapper typeMapper, TypeMirror returnTypeOfMethod) {
