@@ -58,11 +58,11 @@ public class CollectionUsage {
         proxy.getSimpleTestModelBeans().add(new SimpleTestModelBean());
         proxy.getSimpleTestModelBeans().add(new SimpleTestModelBean());
 
-        proxy.getSimpleTestModelBeans().stream().forEach(simpleTestModelBean -> simpleTestModelBean.setSimpleProperty("Hello Stream"));
+        proxy.getSimpleTestModelBeans().forEach(simpleTestModelBean -> simpleTestModelBean.setSimpleProperty("Hello Stream"));
 
 
         Assert.assertThat(pcl.getEvents().size(), CoreMatchers.equalTo(3));
-        pcl.getEvents().stream().forEach(propertyChangeEvent -> {
+        pcl.getEvents().forEach(propertyChangeEvent -> {
             Assert.assertThat(propertyChangeEvent.getOldValue(), CoreMatchers.equalTo(null));
             Assert.assertThat(propertyChangeEvent.getNewValue(), CoreMatchers.equalTo("Hello Stream"));
         });
@@ -76,7 +76,6 @@ public class CollectionUsage {
         model.addPropertyChangeListener("simpleTestModelBeans[*].simpleProperty", pcl);
         CollectionContainingModelBean proxy = model.getProxy();
         proxy.setSimpleTestModelBeans(new ArrayList<>());
-        //TODO proxy getter
         proxy.getSimpleTestModelBeans().add(new SimpleTestModelBean());
         proxy.getSimpleTestModelBeans().add(new SimpleTestModelBean());
         proxy.getSimpleTestModelBeans().add(new SimpleTestModelBean());
@@ -88,7 +87,7 @@ public class CollectionUsage {
         }
 
         Assert.assertThat(pcl.getEvents().size(), CoreMatchers.equalTo(3));
-        pcl.getEvents().stream().forEach(propertyChangeEvent -> {
+        pcl.getEvents().forEach(propertyChangeEvent -> {
             Assert.assertThat(propertyChangeEvent.getOldValue(), CoreMatchers.equalTo(null));
             Assert.assertThat(propertyChangeEvent.getNewValue(), CoreMatchers.equalTo("Hello For Each"));
         });

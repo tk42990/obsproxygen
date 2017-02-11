@@ -50,22 +50,19 @@ public final class Observable${classname} <#if type_parameter?has_content><${typ
         if(this.${property.property_name} == ${property.property_name}){
             return this.${property.property_name};
         }
-        this.${property.property_name} = ObservableFactory.makeObservable(prefix + "${property.property_name}", observableModel, source.getProperty());
-        return this.property;
+        this.${property.property_name} = ObservableFactory.makeObservable(prefix + "${property.property_name}", observableModel, source.${property.method_name}(${property.parameter_call}));
+        return this.${property.property_name};
 </#if>
-<#if property.return_value>
-        return source.${property.method_name}(${property.parameter_call});
-<#else>
-    <#if property.is_property_setter>
+<#if property.is_property_setter>
         Object oldValue = <#if property.has_getter> ${property.getter_name}() <#else>null</#if>;
-        ${property.parameter_call} = ObservableFactory.makeObservable(prefix+ "${property.property_name}", observableModel,${property.parameter_call});
-        // set proxy value
-    </#if>
+        this.${property.parameter_call} = ObservableFactory.makeObservable(prefix+ "${property.property_name}", observableModel,${property.parameter_call});
+        observableModel.firePropertyChangeListener(prefix.isEmpty() ? "${property.property_name}" : prefix + "." + "${property.property_name}",  oldValue, this.${property.parameter_call});
+</#if>
+<#if property.return_value && !property.is_property_getter>
+        return source.${property.method_name}(${property.parameter_call});
+</#if>
+<#if !property.return_value>
         source.${property.method_name}(${property.parameter_call});
-    <#if property.is_property_setter>
-        observableModel.firePropertyChangeListener(prefix.isEmpty() ? "${property.property_name}" : prefix + "." + "${property.property_name}",  oldValue, ${property.parameter_call});
-    </#if>
-
 </#if>
     }
 </#list>
@@ -87,29 +84,4 @@ public final class Observable${classname} <#if type_parameter?has_content><${typ
         return source.hashCode();
     }
 
-/*
-@Override
-public org.obsproxygen.bean.beans.OtherSimpleTestModelBean getProperty(){
-Object property = source.getProperty();
-if(this.property == property){
-return this.property;
-}
-this.property = ObservableFactory.makeObservable(prefix + "property", observableModel, source.getProperty());
-return this.property;
-}
-
-@Override
-public void setProperty(org.obsproxygen.bean.beans.OtherSimpleTestModelBean property){
-
-
-Object oldValue =  getProperty() ;
-property = ObservableFactory.makeObservable(prefix+ "property", observableModel,property);
-
-// set proxy value
-this.property = property;
-source.setProperty(property);
-observableModel.firePropertyChangeListener(prefix.isEmpty() ? "property" : prefix + "." + "property",  oldValue, property);
-
-}
-*/
 }

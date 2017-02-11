@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class CodeGenerator {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private Filer filer;
     private Messager messager;
