@@ -45,29 +45,26 @@ public final class Observable${classname} <#if type_parameter?has_content><${typ
 
     @Override
     ${property.method_signature}{
-
 <#if property.is_property_getter>
-        if (!(source.${property.method_name}(${property.parameter_call}) instanceof ObservableBean)){
-            //get value from source
-             // create proxy
-             //save proxy value
+        Object ${property.property_name} = source.${property.method_name}(${property.parameter_call});
+        if(this.${property.property_name} == ${property.property_name}){
+            return this.${property.property_name};
         }
-        // return proxy value
-
+        this.${property.property_name} = ObservableFactory.makeObservable(prefix + "${property.property_name}", observableModel, source.getProperty());
+        return this.property;
 </#if>
-
 <#if property.return_value>
         return source.${property.method_name}(${property.parameter_call});
 <#else>
-<#if property.is_property_setter>
+    <#if property.is_property_setter>
         Object oldValue = <#if property.has_getter> ${property.getter_name}() <#else>null</#if>;
         ${property.parameter_call} = ObservableFactory.makeObservable(prefix+ "${property.property_name}", observableModel,${property.parameter_call});
         // set proxy value
-</#if>
+    </#if>
         source.${property.method_name}(${property.parameter_call});
-<#if property.is_property_setter>
+    <#if property.is_property_setter>
         observableModel.firePropertyChangeListener(prefix.isEmpty() ? "${property.property_name}" : prefix + "." + "${property.property_name}",  oldValue, ${property.parameter_call});
-</#if>
+    </#if>
 
 </#if>
     }
