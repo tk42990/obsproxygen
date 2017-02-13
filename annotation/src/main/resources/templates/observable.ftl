@@ -76,6 +76,10 @@ public final class Observable${classname} <#if type_parameter?has_content><${typ
 
     @Override
     public boolean equals(Object obj) {
+
+        if(obj instanceof ObservableBean){
+            return source.equals(((ObservableBean)obj).getSource());
+        }
         return source.equals(obj);
     }
 

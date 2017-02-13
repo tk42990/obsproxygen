@@ -32,12 +32,10 @@ public class SimpleUsage {
         model.addPropertyChangeListener("simpleProperty", pcl);
         model.getProxy().setSimpleProperty("Hello");
         model.getProxy().setSimpleProperty("Hello1");
-
         assertThat(pcl.getEvents().size(),CoreMatchers.equalTo(2));
         assertThat(pcl.getEvents().get(0).getNewValue(),CoreMatchers.equalTo("Hello"));
         assertThat(pcl.getEvents().get(1).getNewValue(),CoreMatchers.equalTo("Hello1"));
         assertThat(pcl.getEvents().get(1).getOldValue(),CoreMatchers.equalTo("Hello"));
-
     }
 
     @Test

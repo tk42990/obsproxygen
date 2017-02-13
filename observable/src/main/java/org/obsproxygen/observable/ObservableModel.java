@@ -18,6 +18,8 @@ public class ObservableModel<T> {
 
     private Map<String, List<PropertyChangeListener>> listeners = new HashMap<>();
 
+    private Map<String, List<CollectionChangeListener>> collectionListeners = new HashMap<>();
+
     /**
      * Constructor
      * @param source the source object
@@ -48,10 +50,22 @@ public class ObservableModel<T> {
         listenerList.add(propertyChangeListener);
     }
 
+    public void addCollectionChangeListener(String path, CollectionChangeListener collectionChangeListener) {
+        List<CollectionChangeListener> listenerList = collectionListeners.computeIfAbsent(path, k -> new ArrayList<>());
+        listenerList.add(collectionChangeListener);
+    }
+
     public void removePropertyChangeListener(String path, PropertyChangeListener propertyChangeListener) {
         List<PropertyChangeListener> listenerList = listeners.get(path);
         if (listenerList != null) {
             listenerList.remove(propertyChangeListener);
+        }
+    }
+
+    public void removeCollectionChangeListener(String path, CollectionChangeListener collectionChangeListener) {
+        List<CollectionChangeListener> listenerList = collectionListeners.get(path);
+        if (listenerList != null) {
+            listenerList.remove(collectionChangeListener);
         }
     }
 
@@ -66,6 +80,18 @@ public class ObservableModel<T> {
                 PropertyChangeEvent event = new PropertyChangeEvent(this, property, oldValue, newValue);
                 for (PropertyChangeListener pcl : listenerList) {
                     pcl.propertyChange(event);
+                }
+            }
+        }
+    }
+
+    public void fireCollectionChangeListener(String property, CollectionChangedEvent evt) {
+        if (active) {
+            List<CollectionChangeListener> listenerList = collectionListeners.get(property);
+            if (listenerList != null) {
+
+                for (CollectionChangeListener ccl : listenerList) {
+                   ccl.collectionChanged(property,evt);
                 }
             }
         }

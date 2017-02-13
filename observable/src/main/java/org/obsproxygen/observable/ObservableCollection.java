@@ -1,6 +1,7 @@
 package org.obsproxygen.observable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
@@ -61,12 +62,28 @@ public class ObservableCollection<E> implements Collection<E>, ObservableBean<Co
     @Override
     public boolean add(E e) {
         E proxy = ObservableFactory.makeObservable(prefix + COLLECTION_PREFIX, observableModel, e);
-        return source.add(proxy);
+        boolean add = source.add(proxy);
+        if(add){
+            observableModel.fireCollectionChangeListener(prefix,
+                    new CollectionChangedEvent(
+                            e,
+                            CollectionChangedEvent.ChangeType.added,
+                            Collections.unmodifiableCollection(source)));
+        }
+        return add;
     }
 
     @Override
     public boolean remove(Object o) {
-        return source.remove(o); //TODO check
+        boolean remove =source.remove(ObservableFactory.makeObservable(prefix, observableModel, o));
+        if (remove) {
+            observableModel.fireCollectionChangeListener(prefix,
+                    new CollectionChangedEvent(
+                            o,
+                            CollectionChangedEvent.ChangeType.removed,
+                            Collections.unmodifiableCollection(source)));
+        }
+        return remove; //TODO check
     }
 
     @Override
@@ -80,27 +97,65 @@ public class ObservableCollection<E> implements Collection<E>, ObservableBean<Co
                 .stream()
                 .map(e -> ObservableFactory.makeObservable(prefix + COLLECTION_PREFIX, observableModel, e))
                 .collect(Collectors.toList());
-        return source.addAll(newCollection);
+        boolean addAll = source.addAll(newCollection);
+        if (addAll) {
+            observableModel.fireCollectionChangeListener(prefix,
+                    new CollectionChangedEvent(
+                            c,
+                            CollectionChangedEvent.ChangeType.multipleAdd,
+                            Collections.unmodifiableCollection(source)));
+        }
+        return addAll;
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        return source.removeAll(c);
+        boolean removeAll = source.removeAll(c);
+        if (removeAll) {
+            observableModel.fireCollectionChangeListener(prefix + COLLECTION_PREFIX,
+                    new CollectionChangedEvent(
+                            c,
+                            CollectionChangedEvent.ChangeType.multipeRemove,
+                            Collections.unmodifiableCollection(source)));
+        }
+        return removeAll;
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        return source.retainAll(c);
+        boolean retainAll = source.retainAll(c);
+        if (retainAll) {
+            observableModel.fireCollectionChangeListener(prefix ,
+                    new CollectionChangedEvent(
+                            null,
+                            CollectionChangedEvent.ChangeType.multipeRemove,
+                            Collections.unmodifiableCollection(source)));
+        }
+        return retainAll;
     }
 
     @Override
     public void clear() {
         source.clear();
+        observableModel.fireCollectionChangeListener(prefix,
+                new CollectionChangedEvent(
+                        null,
+                        CollectionChangedEvent.ChangeType.multipeRemove,
+                        Collections.unmodifiableCollection(source)));
+
     }
 
     @Override
     public boolean removeIf(Predicate<? super E> filter) {
-        return source.removeIf(filter);
+        boolean removeIf = source.removeIf(filter);
+        if (removeIf) {
+            observableModel.fireCollectionChangeListener(prefix,
+                    new CollectionChangedEvent(
+                            null,
+                            CollectionChangedEvent.ChangeType.multipeRemove,
+                            Collections.unmodifiableCollection(source)));
+        }
+        return removeIf;
     }
 
     @Override
@@ -127,4 +182,17 @@ public class ObservableCollection<E> implements Collection<E>, ObservableBean<Co
     public Collection<E> getSource() {
         return source;
     }
+
+
+    @Override
+    public int hashCode() {
+        return source.hashCode();
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        return source.equals(obj);
+    }
 }
+
