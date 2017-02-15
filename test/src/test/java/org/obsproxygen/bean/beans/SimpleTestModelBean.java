@@ -26,4 +26,22 @@ public class SimpleTestModelBean {
     public void setProperty(OtherSimpleTestModelBean property) {
         this.property = property;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || ! (o instanceof SimpleTestModelBean))
+            return false;
+
+        SimpleTestModelBean that = (SimpleTestModelBean) o;
+
+        return !(simpleProperty != null ? !simpleProperty.equals(that.getSimpleProperty()) : that.getSimpleProperty() != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return simpleProperty != null ? simpleProperty.hashCode() : 0;
+    }
 }

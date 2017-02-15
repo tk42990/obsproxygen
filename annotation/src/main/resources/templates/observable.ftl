@@ -73,7 +73,7 @@ public final class Observable${classname} <#if type_parameter?has_content><${typ
         return source;
     }
 
-
+/*
     @Override
     public boolean equals(Object obj) {
 
@@ -87,5 +87,5 @@ public final class Observable${classname} <#if type_parameter?has_content><${typ
     public int hashCode() {
         return source.hashCode();
     }
-
+*/
 }

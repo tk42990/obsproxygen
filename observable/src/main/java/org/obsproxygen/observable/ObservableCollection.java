@@ -112,7 +112,7 @@ public class ObservableCollection<E> implements Collection<E>, ObservableBean<Co
     public boolean removeAll(Collection<?> c) {
         boolean removeAll = source.removeAll(c);
         if (removeAll) {
-            observableModel.fireCollectionChangeListener(prefix + COLLECTION_PREFIX,
+            observableModel.fireCollectionChangeListener(prefix,
                     new CollectionChangedEvent(
                             c,
                             CollectionChangedEvent.ChangeType.multipeRemove,
